@@ -1,20 +1,15 @@
 name: Validate
-
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-permissions:
-  contents: read
-
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+permissions: { contents: read }
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      - name: Install PyYAML
+        run: pip install pyyaml
       - name: Validate YAML syntax
         run: |
           echo "Validating workflow templates..."
@@ -22,6 +17,5 @@ jobs:
             python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>&1 && echo "OK: $f" || (echo "INVALID: $f" && exit 1)
           done
           echo "All templates valid."
-
       - name: Count templates
         run: echo "Templates: $(find workflows -name '*.yml' | wc -l | tr -d ' ')"
