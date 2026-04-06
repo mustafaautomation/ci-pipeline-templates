@@ -8,20 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate YAML syntax
-        run: |
-          pip install pyyaml -q
-          python3 -c "
-          import yaml, glob, sys
-          errors = 0
-          for f in glob.glob('workflows/**/*.yml', recursive=True):
-              try:
-                  yaml.safe_load(open(f))
-                  print(f'OK: {f}')
-              except Exception as e:
-                  print(f'INVALID: {f} - {e}')
-                  errors += 1
-          total = len(glob.glob('workflows/**/*.yml', recursive=True))
-          print(f'Validated {total} templates')
-          sys.exit(1 if errors else 0)
-          "
+      - name: Install PyYAML
+        run: pip install pyyaml -q
+      - name: Validate workflow templates
+        run: python3 scripts/validate.py
